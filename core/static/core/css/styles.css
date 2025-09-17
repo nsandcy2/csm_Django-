@@ -1,0 +1,195 @@
+/* --- General Reset and Body --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    margin: 0;
+    background: linear-gradient(to right, #e3f2fd, #f0f7ff);
+    color: #333;
+}
+
+/* --- Container --- */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid #d0e7ff;
+}
+
+/* --- Headings --- */
+h2 {
+    color: #154360;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+/* --- Forms --- */
+input[type="text"],
+input[type="password"],
+input[type="file"],
+select {
+    padding: 8px 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[readonly] {
+    background-color: #f0f3f4;
+    color: #333;
+    font-weight: bold;
+    cursor: not-allowed;
+}
+
+button {
+    padding: 10px 18px;
+    margin: 10px 6px;
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.2s;
+}
+
+button:hover {
+    background: linear-gradient(to right, #0056b3, #00a8cc);
+    transform: scale(1.05);
+}
+
+/* --- Flash Messages --- */
+.flash, .alert {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.flash.success, .alert-success { background-color: #d4edda; color: #155724; }
+.flash.danger, .alert-danger { background-color: #f8d7da; color: #721c24; }
+.flash.warning, .alert-warning { background-color: #fff3cd; color: #856404; }
+.flash.info, .alert-info { background-color: #d1ecf1; color: #0c5460; }
+
+/* --- Links --- */
+a.link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+a.link:hover {
+    text-decoration: underline;
+}
+
+/* --- Grid / Project Buttons --- */
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    padding: 10px 20px;
+    background: linear-gradient(to right, #48c6ef, #6bace2);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+}
+
+.nav-btn:hover {
+    transform: scale(1.05);
+}
+
+.add-btn {
+    background: linear-gradient(to right, #00c851, #007e33);
+}
+
+.btn-assign {
+    padding: 10px 18px;
+    background: linear-gradient(to right, #ffbb33, #ff8800);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* --- Tables --- */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 25px;
+    table-layout: fixed;
+    border: 1px solid #ccddee;
+}
+
+th, td {
+    border: 1px solid #e0ecff;
+    padding: 10px;
+    text-align: left;
+    background-color: #fcfdff;
+    word-wrap: break-word;
+}
+
+th {
+    background: linear-gradient(to right, #d0eaff, #f0faff);
+    color: #154360;
+}
+
+td input[type="text"], td select {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+
+td input[type="text"]:focus, td select:focus {
+    outline: none;
+    background-color: #e9f7fe;
+}
+
+td select {
+    background-color: #ebf5ff;
+    border-radius: 3px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        width: 95%;
+    }
+
+    table, th, td {
+        font-size: 14px;
+    }
+}
+
+/* --- Login / Register Boxes --- */
+.login-box {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+}
+
+.login-box form input, .login-box form button {
+    margin-bottom: 12px;
+}

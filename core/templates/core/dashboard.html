@@ -1,0 +1,25 @@
+<!-- templates/core/dashboard.html -->
+{% extends 'core/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ username }}!</h2>
+<p>You are logged in as <strong>Admin</strong></p>
+
+{% if projects %}
+<div class="grid">
+  {% for project in projects %}
+    <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'work_products' project.id %}">
+      {{ project.name }}
+    </a>
+  {% endfor %}
+  <a class="nav-btn add-btn btn btn-success m-1" href="{% url 'add_project' %}">➕ Add Project</a>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+  <a href="{% url 'assign_project' %}" class="btn btn-warning">Assign Project</a>
+</div>
+{% else %}
+<p>No projects available.</p>
+{% endif %}
+
+<a href="{% url 'logout' %}" class="btn btn-secondary mt-2">Logout</a>
+{% endblock %}

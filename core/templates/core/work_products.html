@@ -1,0 +1,15 @@
+<!-- templates/core/work_products.html -->
+{% extends 'core/base.html' %}
+{% block title %}Work Products{% endblock %}
+{% block content %}
+<h2>Work Products – Project {{ project_id }}</h2>
+<div class="grid">
+  <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'crms_index' %}">CRMS ➜</a>
+  <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'fsrm_index' %}">FSRM ➜</a>
+  <a class="nav-btn btn btn-outline-primary m-1" href="#">Safe Ops ➜</a>
+  <a class="nav-btn btn btn-outline-primary m-1" href="#">Evi Learn ➜</a>
+  <a class="nav-btn btn btn-outline-success m-1" href="{% url 'index' %}">Upload Here ➜</a>
+</div>
+<a class="link btn btn-secondary mt-2" href="{% url 'dashboard' %}">← Back to Dashboard</a>
+{% endblock %}
+
