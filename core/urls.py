@@ -13,6 +13,8 @@ urlpatterns = [
     path("user_dashboard/", views.user_dashboard, name="user_dashboard"),
 
     # Projects
+    path("list_of_projects/", views.list_of_projects, name="list_of_projects"),
+    path("list_of_wp/", views.list_of_wp, name="list_of_wp"),
     path("add_project/", views.add_project, name="add_project"),
     path("assign_project/", views.assign_project, name="assign_project"),
     path("work_products/<int:project_id>/", views.work_products, name="work_products"),

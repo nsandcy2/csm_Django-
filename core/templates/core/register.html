@@ -1,24 +1,32 @@
-<!-- templates/core/register.html -->
-{% extends 'core/base.html' %}
+{% extends "base.html" %}
 {% block title %}Register{% endblock %}
+
 {% block content %}
-<h2>Register</h2>
-<form method="POST">
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-brand mb-6 text-center">Register</h2>
+
+  <form method="POST" class="space-y-5">
     {% csrf_token %}
-    <label>Username:</label>
-    <input type="text" name="username" required><br><br>
+    <input type="text" name="username" placeholder="Username" required
+           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none"/>
+    <input type="password" name="password" placeholder="Password" required
+           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none"/>
 
-    <label>Password:</label>
-    <input type="password" name="password" required><br><br>
+    <select name="role" required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none">
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
+    </select>
 
-    <label>Role:</label>
-    <select name="role" required>
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-    </select><br><br>
+    <button type="submit"
+      class="w-full py-3 bg-accent text-white font-semibold rounded-lg hover:bg-brand transition">
+      Register
+    </button>
+  </form>
 
-    <button type="submit" class="btn btn-success mt-2">Register</button>
-</form>
-
-<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  <p class="text-center text-sm text-gray-600 mt-6">
+    Already have an account?
+    <a href="{% url 'login' %}" class="text-accent font-medium hover:underline">Login</a>
+  </p>
+</div>
 {% endblock %}

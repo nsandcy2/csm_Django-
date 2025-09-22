@@ -1,33 +1,38 @@
-<!-- templates/core/assign_project.html -->
-{% extends 'core/base.html' %}
+{% extends "base.html" %}
 {% block title %}Assign Project{% endblock %}
+
 {% block content %}
-<h2>Assign Project to User</h2>
-
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-{% endif %}
-
-<form method="POST">
+<div class="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-brand mb-6">Assign Project to User</h2>
+  <form method="POST" class="space-y-5">
     {% csrf_token %}
-    <label for="project_id">Select Project:</label>
-    <select name="project_id" required>
+
+    <div>
+      <label class="block mb-2 font-medium">Select Project</label>
+      <select name="project_id" required
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none">
         <option value="">-- Select Project --</option>
         {% for project in projects %}
-            <option value="{{ project.id }}">{{ project.name }}</option>
+          <option value="{{ project.id }}">{{ project.name }}</option>
         {% endfor %}
-    </select>
+      </select>
+    </div>
 
-    <label for="user_id">Select User:</label>
-    <select name="user_id" required>
+    <div>
+      <label class="block mb-2 font-medium">Select User</label>
+      <select name="user_id" required
+              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none">
         <option value="">-- Select User --</option>
         {% for user in users %}
-            <option value="{{ user.id }}">{{ user.username }}</option>
+          <option value="{{ user.id }}">{{ user.username }}</option>
         {% endfor %}
-    </select>
+      </select>
+    </div>
 
-    <button type="submit" class="btn btn-success mt-2">Assign Project</button>
-</form>
+    <button type="submit"
+      class="px-6 py-3 bg-accent text-white rounded-lg hover:bg-brand transition">
+      Assign Project
+    </button>
+  </form>
+</div>
 {% endblock %}

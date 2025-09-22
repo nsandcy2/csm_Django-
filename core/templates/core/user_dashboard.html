@@ -1,21 +1,28 @@
-<!-- templates/core/user_dashboard.html -->
-{% extends 'core/base.html' %}
+{% extends "base.html" %}
 {% block title %}User Dashboard{% endblock %}
+
 {% block content %}
-<h2>Welcome, {{ username }}!</h2>
-<p>You are logged in as <strong>User</strong></p>
+<h2 class="text-2xl font-bold text-brand mb-6" data-aos="fade-right">
+  Welcome, {{ username }} (User)
+</h2>
+<h3>My Projects</h3>
 
 {% if projects %}
-<div class="grid">
+<div class="grid md:grid-cols-2 gap-6">
   {% for project in projects %}
-   <a class="nav-btn" href="{% url 'work_products' project.id %}">
-    {{ project.name }}
-  </a>
+    <a href="{% url 'work_products' project.id %}"
+       class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+       data-aos="fade-up">
+      {{ project.name }}
+    </a>
   {% endfor %}
 </div>
 {% else %}
-<p>No assigned projects available.</p>
+<p class="text-gray-600">No assigned projects available.</p>
 {% endif %}
 
-<a href="{% url 'logout' %}" class="btn">Logout</a>
+<a href="{% url 'logout' %}"
+   class="inline-block mt-6 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+   Logout
+</a>
 {% endblock %}

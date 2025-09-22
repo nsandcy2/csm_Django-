@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Work Products - CSM{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-brand mb-8" data-aos="fade-down">All Work Products</h1>
+
+<div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for wp in workproducts %}
+    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-brand hover:shadow-xl transition transform hover:-translate-y-1" data-aos="fade-up">
+      <h2 class="text-xl font-semibold text-gray-800">{{ wp.name }}</h2>
+      <p class="text-gray-600 mt-2">{{ wp.description|default:"No description available." }}</p>
+      <p class="mt-4 text-sm text-gray-500">Project: <span class="font-medium">{{ wp.project.name }}</span></p>
+      <p class="mt-1 text-sm text-gray-500">Created on: {{ wp.created_at|date:"M d, Y" }}</p>
+      {% if wp.enabled %}
+        <span class="inline-block mt-3 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Enabled</span>
+      {% else %}
+        <span class="inline-block mt-3 px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">Disabled</span>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p class="text-gray-600 col-span-full">No work products available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

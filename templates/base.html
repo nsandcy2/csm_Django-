@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Chip Safety Manager{% endblock %}</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#0b4a86',
+            accent: '#0070f3'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      AOS.init();
+    });
+  </script>
+</head>
+
+<body class="antialiased text-gray-800 flex flex-col min-h-screen">
+  <!-- NAV -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <span class="font-extrabold text-2xl text-brand">CSM</span>
+      </a>
+      <nav class="hidden md:flex gap-8 text-sm font-semibold text-gray-700">
+        <a href="/" class="hover:text-accent">Home</a>
+        <a href="{% url 'list_of_projects' %}" class="hover:text-accent">Projects</a>
+        <a href="{% url 'list_of_wp'%}" class="hover:text-accent">Work Products</a>
+        <a href="/about" class="hover:text-accent">About</a>
+        {% if user.is_authenticated %}
+        {%if user.role == 'user'%}
+        <a href="{% url 'user_dashboard'%}" class="hover:text-accent">Dashboard</a>
+        {% else %}
+        <a href="{% url 'dashboard'%}" class="hover:text-accent">Dashboard</a>
+        {% endif %}
+        <a href="{% url 'logout' %}" class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-accent">Logout</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-brand">Login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1">
+    <!-- Django Messages -->
+    {% if messages %}
+    <div id="messages" class="max-w-4xl mx-auto px-6 pt-6 space-y-3">
+      {% for message in messages %}
+      <div class="p-4 rounded-lg text-white transition-opacity duration-500" data-message
+        {% if message.tags == 'success' %} style="background-color:#16a34a" {% elif message.tags == 'error' %}
+        style="background-color:#dc2626" {% elif message.tags == 'warning' %} style="background-color:#ca8a04"
+        {% else %} style="background-color:#4b5563" {% endif %}>
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+      setTimeout(() => {
+        document.querySelectorAll('[data-message]').forEach(el => {
+          el.classList.add('opacity-0');
+          setTimeout(() => el.remove(), 500);
+        });
+      }, 2000);
+    </script>
+    {% endif %}
+
+    {% block hero %}{% endblock %}
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-brand text-gray-300">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-white font-bold text-lg">Chip Safety Manager</h3>
+        <p class="mt-3 text-sm leading-relaxed">One platform to review ISO 26262 work products.</p>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold">Navigation</h3>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="/" class="hover:text-white">Home</a></li>
+          <li><a href="/about" class="hover:text-white">About</a></li>
+          <li><a href="/contact" class="hover:text-white">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold">Resources</h3>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="/docs" class="hover:text-white">Docs</a></li>
+          <li><a href="/support" class="hover:text-white">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-semibold">Contact</h3>
+        <p class="mt-4 text-sm">support@yourcompany.com</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 text-center text-sm py-4">© {{ year }} Your Company</div>
+  </footer>
+</body>
+
+</html>

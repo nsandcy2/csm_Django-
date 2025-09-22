@@ -1,15 +1,32 @@
-<!-- templates/core/work_products.html -->
-{% extends 'core/base.html' %}
-{% block title %}Work Products{% endblock %}
-{% block content %}
-<h2>Work Products – Project {{ project_id }}</h2>
-<div class="grid">
-  <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'crms_index' %}">CRMS ➜</a>
-  <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'fsrm_index' %}">FSRM ➜</a>
-  <a class="nav-btn btn btn-outline-primary m-1" href="#">Safe Ops ➜</a>
-  <a class="nav-btn btn btn-outline-primary m-1" href="#">Evi Learn ➜</a>
-  <a class="nav-btn btn btn-outline-success m-1" href="{% url 'index' %}">Upload Here ➜</a>
-</div>
-<a class="link btn btn-secondary mt-2" href="{% url 'dashboard' %}">← Back to Dashboard</a>
-{% endblock %}
+{% extends "base.html" %}
+{% block title %}Work Products – {{ project.name }}{% endblock %}
 
+{% block content %}
+<div class="max-w-5xl mx-auto" data-aos="fade-up">
+  <h2 class="text-3xl font-bold text-brand mb-8 text-center">
+    Work Products – {{ project.name }}
+  </h2>
+
+  {% if workproducts %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {% for wp in workproducts %}
+        <a href="/{{ wp.name|lower }}"
+           class="block bg-white p-4 rounded-xl shadow hover:shadow-lg text-center font-semibold text-brand transition"
+           data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:"100" }}">
+          {{ wp.name }} ➜
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-gray-600 mt-8">No tailored work products available for this project.</p>
+  {% endif %}
+
+  <div class="text-center mt-8">
+    <a href="{% url 'dashboard' %}" 
+       class="inline-block px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" 
+       data-aos="fade-left">
+      ← Back to Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}
