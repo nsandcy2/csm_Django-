@@ -198,7 +198,7 @@ def send_change_request_email(change_request, recipients):
     body = f"Change Request ID: {change_request.change_request_id}\n\nDetails:\n"
     
     for field in change_request._meta.fields:
-        if field.name != 'uploaded_file_data':
+        if field.name != 'file':
             value = getattr(change_request, field.name)
             formatted_name = field.name.replace('_', ' ').title()
             body += f"{formatted_name}: {value}\n"

@@ -1,93 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lookup Existing Change Request</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-        }
+{% extends "base.html" %}
+{% block title %}Lookup Existing Change Request{% endblock %}
 
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 600px;
-        }
+{% block content %}
+<div class="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg" data-aos="fade-up">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Find Existing Change Request</h2>
 
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
+    {% if messages %}
+        {% for message in messages %}
+            <p class="{% if message.tags == 'error' %}text-red-600{% else %}text-green-600{% endif %} font-semibold mb-4">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
-        label {
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        input[type="submit"],
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        button:hover, input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .message {
-            color: green;
-            font-weight: bold;
-        }
-
-        .error {
-            color: red;
-        }
-
-        hr {
-            margin: 30px 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Find Existing Change Request</h2>
-
-        {% if messages %}
-            {% for message in messages %}
-                {% if message.tags == 'error' %}
-                    <p class="error">{{ message }}</p>
-                {% else %}
-                    <p class="message">{{ message }}</p>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">
-            {% csrf_token %}
-            <label for="change_request_id">Change Request ID:</label>
-            <input type="text" name="change_request_id" id="change_request_id" required>
-            <input type="submit" value="Lookup">
-        </form>
-    </div>
-</body>
-</html>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label for="change_request_id" class="block font-semibold text-gray-700 mb-1">Change Request ID</label>
+            <input type="text" name="change_request_id" id="change_request_id" required
+                   class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-accent">
+        </div>
+        <input type="submit" value="Lookup" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+    </form>
+</div>
+{% endblock %}

@@ -39,16 +39,16 @@
       </a>
       <nav class="hidden md:flex gap-8 text-sm font-semibold text-gray-700">
         <a href="/" class="hover:text-accent">Home</a>
-        <a href="{% url 'list_of_projects' %}" class="hover:text-accent">Projects</a>
+        <a href="{% url 'list_of_projects' %}" class="hover:text-accent ">Projects</a>
         <a href="{% url 'list_of_wp'%}" class="hover:text-accent">Work Products</a>
-        <a href="/about" class="hover:text-accent">About</a>
+        <a href="/about" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">About</a>
         {% if user.is_authenticated %}
         {%if user.role == 'user'%}
-        <a href="{% url 'user_dashboard'%}" class="hover:text-accent">Dashboard</a>
+        <a href="{% url 'user_dashboard'%}" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">Dashboard</a>
         {% else %}
-        <a href="{% url 'dashboard'%}" class="hover:text-accent">Dashboard</a>
+        <a href="{% url 'dashboard'%}" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">Dashboard</a>
         {% endif %}
-        <a href="{% url 'logout' %}" class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-accent">Logout</a>
+        <a href="{% url 'logout' %}" class="px-4 py-2 bg-brand text-white rounded-lg  hover:bg-red-600">Logout</a>
         {% else %}
         <a href="{% url 'login' %}" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-brand">Login</a>
         {% endif %}

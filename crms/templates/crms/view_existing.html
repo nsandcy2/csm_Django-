@@ -1,74 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>View Existing Change Request</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f7f7f7;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .change-request-details {
-            margin-bottom: 20px;
-        }
-        .change-request-details p {
-            margin: 10px 0;
-            padding: 8px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        .actions {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .actions a {
-            display: inline-block;
-            margin: 0 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .actions a:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h2>Existing Change Request: {{ cr.change_request_id }}</h2>
-    
-    <div class="change-request-details">
+{% extends "base.html" %}
+{% block title %}View Existing Change Request{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg" data-aos="fade-up">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Existing Change Request: {{ cr.change_request_id }}</h2>
+
+    <div class="space-y-3">
         <p><strong>Start Date:</strong> {{ cr.start_date }}</p>
         <p><strong>End Date:</strong> {{ cr.end_date }}</p>
         <p><strong>Phase:</strong> {{ cr.phase }}</p>
         <p><strong>Summary:</strong> {{ cr.summary_of_change }}</p>
         {% if cr.uploaded_file_name %}
-        <p><strong>Attached File:</strong> 
-            <a href="{% url 'download_db_file' cr.change_request_id %}" target="_blank">{{ cr.uploaded_file_name }}</a>
-        </p>
+            <p><strong>Attached File:</strong> 
+                <a href="{% url 'download_db_file' cr.change_request_id %}" class="text-blue-600 hover:underline" target="_blank">{{ cr.uploaded_file_name }}</a>
+            </p>
         {% endif %}
     </div>
 
-    <div class="actions">
-        <a href="{% url 'new_request' %}?change_request_id={{ cr.change_request_id }}">Edit</a>
-        <a href="{% url 'existing_change_request' %}">Back to Lookup</a>
-        <a href="{% url 'crms_index' %}">Home</a>
+    <div class="flex justify-center gap-4 mt-6">
+        <a href="{% url 'new_request' %}?change_request_id={{ cr.change_request_id }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit</a>
+        <a href="{% url 'existing_change_request' %}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Back to Lookup</a>
+        <a href="{% url 'crms_index' %}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Home</a>
     </div>
 </div>
-</body>
-</html>
+{% endblock %}
