@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,17 +18,18 @@
       }
     }
   </script>
+
   <!-- AOS -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      AOS.init();
-    });
-  </script>
-</head>
+  <script>document.addEventListener("DOMContentLoaded", () => { AOS.init({ duration: 1000, once: true }); });</script>
 
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+</head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
+
   <!-- NAV -->
   <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -38,35 +38,35 @@
       </a>
       <nav class="hidden md:flex gap-8 text-sm font-semibold text-gray-700">
         <a href="/" class="hover:text-accent">Home</a>
-        <a href="{% url 'list_of_projects' %}" class="hover:text-accent ">Projects</a>
-        <a href="{% url 'list_of_wp'%}" class="hover:text-accent">Work Products</a>
-        <a href="/about" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">About</a>
+        <a href="{% url 'list_of_projects' %}" class="hover:text-accent">Projects</a>
+        <a href="{% url 'list_of_wp' %}" class="hover:text-accent">Work Products</a>
+        <a href="/about" class="hover:text-accent">About</a>
+
         {% if user.is_authenticated %}
-        {%if user.role == 'user'%}
-        <a href="{% url 'user_dashboard'%}" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">Dashboard</a>
+          {% if user.role == 'user' %}
+            <a href="{% url 'user_dashboard' %}" class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-accent">Dashboard</a>
+          {% else %}
+            <a href="{% url 'dashboard' %}" class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-accent">Dashboard</a>
+          {% endif %}
+          <a href="{% url 'logout' %}" class="px-4 py-2 bg-red-600 text-white rounded-lg">Logout</a>
         {% else %}
-        <a href="{% url 'dashboard'%}" class="hover:text-accent px-4 py-2 text-white bg-brand rounded-lg">Dashboard</a>
-        {% endif %}
-        <a href="{% url 'logout' %}" class="px-4 py-2 bg-brand text-white rounded-lg  hover:bg-red-600">Logout</a>
-        {% else %}
-        <a href="{% url 'login' %}" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-brand">Login</a>
+          <a href="{% url 'login' %}" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-brand">Login</a>
         {% endif %}
       </nav>
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main class="flex-1">
-    <!-- Django Messages -->
-    {% if messages %}
+  <!-- Django Messages -->
+  {% if messages %}
     <div id="messages" class="max-w-4xl mx-auto px-6 pt-6 space-y-3">
       {% for message in messages %}
-      <div class="p-4 rounded-lg text-white transition-opacity duration-500" data-message
-        {% if message.tags == 'success' %} style="background-color:#16a34a" {% elif message.tags == 'error' %}
-        style="background-color:#dc2626" {% elif message.tags == 'warning' %} style="background-color:#ca8a04"
-        {% else %} style="background-color:#4b5563" {% endif %}>
-        {{ message }}
-      </div>
+        <div class="p-4 rounded-lg text-white transition-opacity duration-500" data-message
+          {% if message.tags == 'success' %} style="background-color:#16a34a"
+          {% elif message.tags == 'error' %} style="background-color:#dc2626"
+          {% elif message.tags == 'warning' %} style="background-color:#ca8a04"
+          {% else %} style="background-color:#4b5563" {% endif %}>
+          {{ message }}
+        </div>
       {% endfor %}
     </div>
     <script>
@@ -77,13 +77,60 @@
         });
       }, 2000);
     </script>
-    {% endif %}
+  {% endif %}
 
-    {% block hero %}{% endblock %}
-    <div class="max-w-7xl mx-auto px-6 py-12">
-      {% block content %}{% endblock %}
-    </div>
+  <!-- HERO -->
+  <!-- <section class="relative bg-gradient-to-r from-brand to-accent text-white flex flex-col justify-center items-center text-center py-20 overflow-hidden">
+    <h1 class="text-5xl md:text-6xl font-extrabold mb-6" data-aos="fade-up">Chip Safety Manager</h1>
+    <p class="text-lg md:text-2xl max-w-2xl" data-aos="fade-up" data-aos-delay="200">
+      One platform to review all ISO 26262 functional safety work products with consistency and confidence.
+    </p>
+    <a href="#slides" data-aos="zoom-in" data-aos-delay="400"
+       class="mt-8 px-6 py-3 bg-white text-brand font-bold rounded-lg shadow hover:bg-gray-100 transition">
+      Learn More
+    </a>
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 animate-pulse"></div>
+  </section> -->
+
+  <!-- CONTENT (for Django pages) -->
+  <main class="flex-1 max-w-7xl mx-auto px-6 py-12">
+    {% block content %}{% endblock %}
   </main>
+  <!-- SLIDESHOW -->
+  <!-- <section id="slides" class="py-20 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide p-10 bg-white rounded-2xl shadow-lg" data-aos="fade-right">
+            <h2 class="text-3xl font-bold text-brand mb-4">The Problem</h2>
+            <p class="text-gray-700 text-lg">
+              ISO 26262 requires 110+ safety work products. Today, they’re scattered across multiple tools, formats, and locations.
+            </p>
+          </div>
+          <div class="swiper-slide p-10 bg-white rounded-2xl shadow-lg" data-aos="fade-up">
+            <h2 class="text-3xl font-bold text-brand mb-4">The Solution</h2>
+            <p class="text-gray-700 text-lg">
+              Chip Safety Manager centralizes all work products into a single platform, making reviews easier and more consistent.
+            </p>
+          </div>
+          <div class="swiper-slide p-10 bg-white rounded-2xl shadow-lg" data-aos="fade-left">
+            <h2 class="text-3xl font-bold text-brand mb-4">The Benefits</h2>
+            <ul class="list-disc pl-6 text-gray-700 text-lg space-y-2">
+              <li>Ensure completeness before safety audits</li>
+              <li>Save time with structured review workflows</li>
+              <li>Improve compliance confidence</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flex justify-center mt-8 gap-6">
+          <div class="swiper-button-prev !static !text-brand"></div>
+          <div class="swiper-button-next !static !text-brand"></div>
+        </div>
+        <div class="swiper-pagination mt-4"></div>
+      </div>
+    </div>
+  </section> -->
+
 
   <!-- FOOTER -->
   <footer class="bg-brand text-gray-300">
@@ -114,6 +161,14 @@
     </div>
     <div class="border-t border-gray-700 text-center text-sm py-4">© {{ year }} Your Company</div>
   </footer>
-</body>
 
+  <script>
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      autoplay: { delay: 4000 },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
+    });
+  </script>
+</body>
 </html>
