@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
 from dotenv import load_dotenv
 
@@ -44,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "core",
     "crms",
-    "fsrm"
+    "fsrm",
+    "safe_ops"
 ]
 
 MIDDLEWARE = [
@@ -88,9 +88,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": os.getenv("MYSQL_DB", "csm_db_3"),
         "USER": os.getenv("MYSQL_USER", "root"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "Nsandcy143@"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD", "root123"),
         "HOST": os.getenv("MYSQL_HOST", "127.0.0.1"),
-        "PORT": os.getenv("MYSQL_PORT", "3306"),
+        "PORT": os.getenv("MYSQL_PORT", "3307"),
     }
 }
 
