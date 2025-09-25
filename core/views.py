@@ -22,7 +22,7 @@ from django.urls import reverse
 
 
 def home(request):
-    return render(request, '../templates/base.html')
+    return render(request, 'core/index.html')
 # ------------------ Auth ------------------
 def register(request):
     if request.method == "POST":
