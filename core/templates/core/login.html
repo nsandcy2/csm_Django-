@@ -1,20 +1,26 @@
-<!-- templates/core/login.html -->
-{% extends 'core/base.html' %}
+{% extends "base.html" %}
 {% block title %}Login{% endblock %}
+
 {% block content %}
-<div class="login-box">
-  <h2>Login</h2>
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-  <form method="POST">
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up">
+  <h2 class="text-2xl font-bold text-brand mb-6 text-center">Login</h2>
+
+  <form method="POST" class="space-y-5">
     {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit" class="btn btn-primary mt-2">Login</button>
+    <input type="text" name="username" placeholder="Username" required
+           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none"/>
+    <input type="password" name="password" placeholder="Password" required
+           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:outline-none"/>
+
+    <button type="submit"
+      class="w-full py-3 bg-brand text-white font-semibold rounded-lg hover:bg-accent transition">
+      Login
+    </button>
   </form>
-  <p>Don’t have an account? <a href="{% url 'register' %}">Register Now</a></p>
+
+  <p class="text-center text-sm text-gray-600 mt-6">
+    Don’t have an account?
+    <a href="{% url 'register' %}" class="text-accent font-medium hover:underline">Register Now</a>
+  </p>
 </div>
 {% endblock %}

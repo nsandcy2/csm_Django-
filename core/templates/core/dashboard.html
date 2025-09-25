@@ -1,25 +1,46 @@
-<!-- templates/core/dashboard.html -->
-{% extends 'core/base.html' %}
+{% extends "base.html" %}
 {% block title %}Admin Dashboard{% endblock %}
-{% block content %}
-<h2>Welcome, {{ username }}!</h2>
-<p>You are logged in as <strong>Admin</strong></p>
 
+{% block content %}
+<h2 class="text-2xl font-bold text-brand mb-6" data-aos="fade-right">
+  Welcome, {{ username }} (Admin)
+</h2>
+<h3> Projects</h3>
 {% if projects %}
-<div class="grid">
+<div class="grid md:grid-cols-3 gap-6">
   {% for project in projects %}
-    <a class="nav-btn btn btn-outline-primary m-1" href="{% url 'work_products' project.id %}">
+    <a href="{% url 'work_products' project.id %}"
+       class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+       data-aos="zoom-in">
       {{ project.name }}
     </a>
   {% endfor %}
-  <a class="nav-btn add-btn btn btn-success m-1" href="{% url 'add_project' %}">➕ Add Project</a>
+  <a href="{% url 'add_project' %}"
+     class="p-6 bg-accent text-white rounded-xl shadow hover:bg-brand transition flex items-center justify-center"
+     data-aos="zoom-in" data-aos-delay="100">
+    ➕ Add Project
+  </a>
 </div>
-<div style="text-align: center; margin-top: 20px;">
-  <a href="{% url 'assign_project' %}" class="btn btn-warning">Assign Project</a>
+
+<div class="text-center mt-6">
+  <a href="{% url 'assign_project' %}"
+     class="px-6 py-3 bg-brand text-white rounded-lg hover:bg-accent transition">
+    Assign Project
+  </a>
 </div>
 {% else %}
-<p>No projects available.</p>
+<p class="text-gray-600">No projects available.</p>
+<div class="mt-6">
+<a href="{% url 'add_project' %}"
+     class="p-6 bg-accent text-white rounded-xl shadow hover:bg-brand transition flex items-center justify-center"
+     data-aos="zoom-in" data-aos-delay="100">
+    ➕ Add Project
+  </a>
+  </div>
 {% endif %}
 
-<a href="{% url 'logout' %}" class="btn btn-secondary mt-2">Logout</a>
+<a href="{% url 'logout' %}"
+   class="inline-block mt-6 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+   Logout
+</a>
 {% endblock %}

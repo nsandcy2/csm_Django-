@@ -2,14 +2,14 @@ import os, tempfile, pandas as pd
 from openpyxl import load_workbook
 from openpyxl.utils import range_boundaries
 
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import JsonResponse, FileResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-
-from .models import User, Project
+from .forms import ProjectForm
+from .models import User, Project,WorkProduct
 
 # Global temp storage for uploaded Excel files
 UPLOAD_FOLDER = tempfile.gettempdir()
@@ -19,11 +19,10 @@ from django.urls import reverse
 
 
 
-def home(request):
-    if request.user.is_authenticated:
-        return redirect("dashboard")   # Django uses URL names, not function names`
-    return redirect("login")
 
+
+def home(request):
+    return render(request, '../templates/base.html')
 # ------------------ Auth ------------------
 def register(request):
     if request.method == "POST":
@@ -87,6 +86,29 @@ def user_dashboard(request):
 
 
 # ------------------ Projects ------------------
+# def list_of_wp(request):
+#     workproducts = WorkProduct.objects.all()
+#     return render(request, "core/list_of_wp.html", {"workproducts": workproducts})
+
+# projects list for all users
+def list_of_projects(request):   
+    projects = Project.objects.all()
+    return render(request, "core/list_of_projects.html", {
+        "projects": projects,
+        "view_type": "all",
+    })
+
+
+
+# Projects for specific logged-in user
+@login_required
+def projects_list(request):
+    projects = Project.objects.filter(owner=request.user)
+    return render(request, "core/list_of_projects.html", {
+        "projects": projects,
+        "view_type": "user",
+    })
+
 @login_required
 def add_project(request):
     if request.method == "POST":
@@ -124,11 +146,23 @@ def assign_project(request):
         {"projects": Project.objects.all(), "users": User.objects.all()},
     )
 
+def list_of_wp(request):
+    workproducts = WorkProduct.objects.all()
+    return render(request, "core/list_of_wp.html", {"workproducts": workproducts})
 
 @login_required
 def work_products(request, project_id):
-    return render(request, "core/work_products.html", {"project_id": project_id})
+    # if request.user.role != "admin":
+    #     messages.error(request, "You do not have permission to view this page.")
+    #     return redirect("dashboard")  # or redirect wherever appropriate
 
+    project = get_object_or_404(Project, id=project_id)
+    workproducts = WorkProduct.objects.filter(project=project, enabled=True)
+
+    return render(request, "core/work_products.html", {
+        "project": project,
+        "workproducts": workproducts,
+    })
 
 
 @login_required

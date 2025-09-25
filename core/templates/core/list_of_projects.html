@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if view_type == "my" %}My Projects - CSM{% else %}Projects - CSM{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8" data-aos="fade-down">
+
+
+  {% if user.is_authenticated and user.role == "admin" %}
+    <a href="{% url 'add_project' %}"
+       class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-accent transition">
+      + Add Project
+    </a>
+  {% endif %}
+</div>
+
+<div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for project in projects %}
+    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-accent hover:shadow-xl transition transform hover:-translate-y-1"
+         data-aos="fade-up">
+      <h2 class="text-xl font-semibold text-gray-800">{{ project.name }}</h2>
+      <p class="mt-2 text-sm text-gray-500">Owner: {{ project.owner.username|default:"N/A" }}</p>
+      <p class="mt-1 text-sm text-gray-500">Created by: {{ project.created_by.username }}</p>
+      <p class="mt-1 text-sm text-gray-500">Created at: {{ project.created_at|date:"M d, Y" }}</p>
+
+      {% if user.is_authenticated and user.role == "admin" %}
+        <a href="{% url 'work_products' project.id %}" 
+           class="mt-3 inline-block px-3 py-1 bg-brand text-white rounded hover:bg-accent text-sm transition">
+          View Work Products
+        </a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p class="text-gray-600 col-span-full text-center">
+      {% if view_type == "my" %}
+        No projects assigned to you yet.
+      {% else %}
+        No projects found.
+      {% endif %}
+    </p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -62,7 +62,7 @@ ROOT_URLCONF = 'project_csm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],   # "DIRS": [BASE_DIR / "templates"],  # global templates folder (optional)
+         "DIRS": [BASE_DIR / "templates"],  # global templates folder (optional)
         "APP_DIRS": True,  # allows templates inside each app/templates/
         'OPTIONS': {
             'context_processors': [
@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'project_csm.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DB", "csm_db_2"),
+        "NAME": os.getenv("MYSQL_DB", "csm_db_3"),
         "USER": os.getenv("MYSQL_USER", "root"),
         "PASSWORD": os.getenv("MYSQL_PASSWORD", "Nsandcy143@"),
         "HOST": os.getenv("MYSQL_HOST", "127.0.0.1"),
@@ -126,6 +126,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# Session expires after 30 minutes of inactivity
+SESSION_COOKIE_AGE = 30 * 60  # seconds
+SESSION_SAVE_EVERY_REQUEST = True  # resets timeout on every request
+LOGIN_URL = "login"
 
 
 # Static files (CSS, JavaScript, Images)

@@ -16,3 +16,14 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     def __str__(self):
         return self.name
+
+class WorkProduct(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="workproducts")
+    enabled = models.BooleanField(default=True)  # lets you enable/disable per project
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.project.name})"
