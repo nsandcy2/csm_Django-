@@ -61,6 +61,80 @@ python manage.py createsuperuser
 ```
 
 ---
+---
+
+## 🆕 Creating a New App in Django
+
+### 1. Create the app
+```bash
+python manage.py startapp myapp
+```
+
+### 2. Register the app in `settings.py`
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
+    # Third-party apps
+    'rest_framework',
+
+    # Local apps
+    'core',
+    'crms',
+    'myapp',   # 👈 new app
+]
+```
+
+### 3. Create database migrations for the new app
+```bash
+python manage.py makemigrations myapp
+python manage.py migrate
+```
+
+### 4. Add URLs for the new app
+In `myapp/urls.py`:
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='myapp_index'),
+]
+```
+
+In `Project_csm/urls.py`:
+```python
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('myapp/', include('myapp.urls')),  # 👈 include new app URLs
+]
+```
+
+### 5. Create views & templates & 
+In `myapp/views.py`:
+```python
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'myapp/index.html')
+```
+
+In `myapp/templates/myapp/index.html`:
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-800">Welcome to MyApp!</h1>
+{% endblock %}
+```
+
+---
 
 ## 🎨 Tailwind CSS Setup
 
