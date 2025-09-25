@@ -5,3 +5,4 @@ psycopg2-binary
 whitenoise
 boto3
 django-storages
+django-environ

@@ -25,6 +25,8 @@ urlpatterns = [
      path('', include("core.urls")),   # core routes
     path("crms/", include("crms.urls")), # crms routes
     path("fsrm/", include("fsrm.urls")),  # fsrm routes
+    path("safe_ops/", include("safe_ops.urls")),  # safe_ops routes
+   
 ]
 
 # Serve media files in development only

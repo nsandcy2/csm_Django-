@@ -49,6 +49,12 @@ Run migrations:
 python manage.py migrate
 ```
 
+Create the new Django app: Use the startapp command with manage.py, specifying the desired name for your new app.
+Code
+
+    python manage.py startapp your_app_name
+
+    
 Create superuser:
 ```bash
 python manage.py createsuperuser
