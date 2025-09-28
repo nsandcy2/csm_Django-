@@ -2,23 +2,26 @@
 {% block title %}Work Products – {{ project.name }}{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto" data-aos="fade-up">
+<div class="max-w-5xl mx-auto p-6" data-aos="fade-up">
   <h2 class="text-3xl font-bold text-brand mb-8 text-center">
     Work Products – {{ project.name }}
   </h2>
 
-  {% if workproducts %}
+  {% if included_workproducts %}
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {% for wp in workproducts %}
+      {% for wp in included_workproducts %}
         <a href="/{{ wp.name|lower }}"
-           class="block bg-white p-4 rounded-xl shadow hover:shadow-lg text-center font-semibold text-brand transition"
+           class="block bg-white p-4 rounded-xl shadow hover:shadow-lg 
+                  text-center font-semibold text-brand transition"
            data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:"100" }}">
           {{ wp.name }} ➜
         </a>
       {% endfor %}
     </div>
   {% else %}
-    <p class="text-center text-gray-600 mt-8">No tailored work products available for this project.</p>
+    <p class="text-center text-gray-600 mt-8">
+      No tailored work products available for this project.
+    </p>
   {% endif %}
 
   <div class="text-center mt-8">

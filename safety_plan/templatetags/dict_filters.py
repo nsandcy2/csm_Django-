@@ -1,0 +1,9 @@
+from django import template
+
+register = template.Library()
+
+@register.filter
+def dictget(d, key):
+    if d and key in d:
+        return d.get(key)
+    return None

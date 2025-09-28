@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load dict_filters %}
+
+
+{% block title %}Tailor WorkProducts for Project {% endblock %}
+
+{% block content %}
+<h2>{{ project.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>WorkProduct</th>
+            <th>Description</th>
+            <th>Tailored Out?</th>
+        </tr>
+        {% for wp in workproducts %}
+        <tr>
+            <td>{{ wp.name }}</td>
+            <td>{{ wp.description }}</td>
+            <td>
+                {% if is_admin %}
+                    {% with pwp=existing_pwps|dictget:wp.id %}
+                        <input type="radio" name="wp_{{ wp.id }}" value="include"
+                            {% if pwp and not pwp.tailored_out %}checked{% elif not pwp %}checked{% endif %}>
+                        Include
+                        <input type="radio" name="wp_{{ wp.id }}" value="out"
+                            {% if pwp and pwp.tailored_out %}checked{% endif %}>
+                        Tailored Out
+                    {% endwith %}
+                {% else %}
+                    {% with pwp=existing_pwps|dictget:wp.id %}
+                        {% if pwp and pwp.tailored_out %}
+                            Tailored Out
+                        {% else %}
+                            Included
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    {% if is_admin %}
+        <button type="submit">Save Tailoring</button>
+    {% endif %}
+</form>
+{% endblock %}

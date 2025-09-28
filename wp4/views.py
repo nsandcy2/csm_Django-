@@ -1,0 +1,8 @@
+from django.shortcuts import render,redirect
+
+# Create your views here.
+
+def index(request):
+   
+    return render(request, "wp4/index.html")  # Django uses URL names, not function names`
+ 

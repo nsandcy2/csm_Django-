@@ -1,3 +1,4 @@
+
 import os, tempfile, pandas as pd
 from openpyxl import load_workbook
 from openpyxl.utils import range_boundaries
@@ -8,7 +9,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from .forms import ProjectForm
+from django.http import JsonResponse, FileResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from .models import User, Project, WorkProduct, ProjectWorkProduct
+
 from .models import User, Project,WorkProduct
 
 # Global temp storage for uploaded Excel files
@@ -18,12 +23,10 @@ excel_data = {}
 from django.urls import reverse
 
 
-
-
-
 def home(request):
-    return render(request, 'core/index.html')
-# ------------------ Auth ------------------
+    return render(request, "core/index.html")
+
+
 def register(request):
     if request.method == "POST":
         username = request.POST["username"].strip()
@@ -31,7 +34,7 @@ def register(request):
         role = request.POST.get("role", "user")
 
         if not username or not password:
-            messages.error(request, "Username and password are required")
+            messages.error(request, "Username and password required")
             return redirect("register")
 
         try:
@@ -49,81 +52,80 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
-
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            messages.success(request, "Login successful!")
             if user.role == "admin":
                 return redirect("dashboard")
             return redirect("user_dashboard")
         else:
-            messages.error(request, "Invalid username or password")
-
+            messages.error(request, "Invalid credentials")
     return render(request, "core/login.html")
 
 
 @login_required
 def logout_view(request):
     logout(request)
-    messages.info(request, "Logged out successfully!")
+    messages.info(request, "Logged out successfully")
     return redirect("login")
 
 
-# ------------------ Dashboards ------------------
 @login_required
 def dashboard(request):
     if request.user.role != "admin":
         return redirect("user_dashboard")
     projects = Project.objects.all()
-    return render(request, "core/dashboard.html", {"username": request.user.username, "projects": projects})
+    return render(request, "core/dashboard.html", {"projects": projects})
 
 
 @login_required
 def user_dashboard(request):
-    projects = Project.objects.filter(owner=request.user)
-    return render(request, "core/user_dashboard.html", {"username": request.user.username, "projects": projects})
+    projects = Project.objects.filter(users=request.user)
+    return render(request, "core/user_dashboard.html", {"projects": projects})
 
-
-# ------------------ Projects ------------------
-# def list_of_wp(request):
-#     workproducts = WorkProduct.objects.all()
-#     return render(request, "core/list_of_wp.html", {"workproducts": workproducts})
-
-# projects list for all users
-def list_of_projects(request):   
-    projects = Project.objects.all()
-    return render(request, "core/list_of_projects.html", {
-        "projects": projects,
-        "view_type": "all",
-    })
-
-
-
-# Projects for specific logged-in user
-@login_required
-def projects_list(request):
-    projects = Project.objects.filter(owner=request.user)
-    return render(request, "core/list_of_projects.html", {
-        "projects": projects,
-        "view_type": "user",
-    })
 
 @login_required
 def add_project(request):
-    if request.method == "POST":
-        raw = request.POST.get("project_name", "").strip()
-        name = raw or f"Project {Project.objects.count() + 1}"
-
-        if Project.objects.filter(name=name).exists():
-            messages.error(request, "Project name already exists")
-            return redirect("dashboard")
-
-        Project.objects.create(name=name, created_by=request.user)
-        messages.success(request, f'Project “{name}” added!')
+    if request.user.role != "admin":
+        messages.error(request, "Only admin can create projects")
         return redirect("dashboard")
 
+    if request.method == "POST":
+        name = request.POST.get("project_name").strip() or f"Project {Project.objects.count() + 1}"
+        if Project.objects.filter(name=name).exists():
+            messages.error(request, "Project name exists")
+            return redirect("dashboard")
+
+        project = Project.objects.create(name=name, created_by=request.user)
+        project.users.add(request.user)
+
+        # Safety Plan WP
+        safety_wp, _ = WorkProduct.objects.get_or_create(
+            name="safety_plan", is_safety_plan=True, app_label="safety_plan"
+        )
+        ProjectWorkProduct.objects.create(
+            project=project,
+            workproduct=safety_wp,
+            tailored_out=False,
+            tailored_by=request.user
+        )
+
+        messages.success(request, "Project created! Tailor its WorkProducts now.")
+        return redirect("tailor_safety_plan", project_id=project.id)
+
     return render(request, "core/add_project.html")
+
+
+@login_required
+def work_products(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    included_pwps = ProjectWorkProduct.objects.filter(project=project, tailored_out=False)
+    tailored_out_pwps = ProjectWorkProduct.objects.filter(project=project, tailored_out=True)
+    return render(request, "core/work_products.html", {
+        "project": project,
+        "included_workproducts": [pwp.workproduct for pwp in included_pwps],
+        "tailored_out_workproducts": [pwp.workproduct for pwp in tailored_out_pwps]
+    })
 
 
 @login_required
@@ -134,40 +136,21 @@ def assign_project(request):
         try:
             project = Project.objects.get(id=project_id)
             user = User.objects.get(id=user_id)
-            project.owner = user
-            project.save()
-            messages.success(request, "✅ Project assigned successfully!")
+            project.users.add(user)
+            messages.success(request, "Project assigned successfully")
         except Exception as e:
-            messages.error(request, f"❌ Error: {e}")
+            messages.error(request, f"Error: {e}")
 
-    return render(
-        request,
-        "core/assign_project.html",
-        {"projects": Project.objects.all(), "users": User.objects.all()},
-    )
-
-def list_of_wp(request):
-    workproducts = WorkProduct.objects.all()
-    return render(request, "core/list_of_wp.html", {"workproducts": workproducts})
-
-@login_required
-def work_products(request, project_id):
-    # if request.user.role != "admin":
-    #     messages.error(request, "You do not have permission to view this page.")
-    #     return redirect("dashboard")  # or redirect wherever appropriate
-
-    project = get_object_or_404(Project, id=project_id)
-    workproducts = WorkProduct.objects.filter(project=project, enabled=True)
-
-    return render(request, "core/work_products.html", {
-        "project": project,
-        "workproducts": workproducts,
+    return render(request, "core/assign_project.html", {
+        "projects": Project.objects.all(),
+        "users": User.objects.all()
     })
 
 
-@login_required
-def index(request):
-    return render(request, "core/login.html")
+def list_of_projects(request):
+    projects = Project.objects.all()
+    return render(request, "core/list_of_projects.html", {"projects": projects})
+
 
 
 # ------------------ Excel Handling ------------------
@@ -279,4 +262,4 @@ def download(request):
     if filename in excel_data:
         filepath = excel_data[filename]["path"]
         return FileResponse(open(filepath, "rb"), as_attachment=True, filename=custom_name)
-    return JsonResponse({"error": "File not found"}, status=404)
+    return JsonResponse({"error": "File not found"}, status=404)  
