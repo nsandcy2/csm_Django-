@@ -6,3 +6,4 @@ whitenoise
 boto3
 django-storages
 django-environ
+django-simple-history

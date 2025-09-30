@@ -1,10 +1,8 @@
-
 import os, tempfile, pandas as pd
 from openpyxl import load_workbook
 from openpyxl.utils import range_boundaries
-
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import JsonResponse, FileResponse
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,29 +12,22 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import User, Project, WorkProduct, ProjectWorkProduct
 
-from .models import User, Project,WorkProduct
-
 # Global temp storage for uploaded Excel files
 UPLOAD_FOLDER = tempfile.gettempdir()
 excel_data = {}
 
-from django.urls import reverse
-
-
+# ----------------- Authentication -----------------
 def home(request):
     return render(request, "core/index.html")
-
 
 def register(request):
     if request.method == "POST":
         username = request.POST["username"].strip()
         password = request.POST["password"]
         role = request.POST.get("role", "user")
-
         if not username or not password:
             messages.error(request, "Username and password required")
             return redirect("register")
-
         try:
             User.objects.create_user(username=username, password=password, role=role)
             messages.success(request, "Registration successful! Please log in.")
@@ -44,9 +35,7 @@ def register(request):
         except IntegrityError:
             messages.warning(request, "Username already exists")
             return redirect("register")
-
     return render(request, "core/register.html")
-
 
 def login_view(request):
     if request.method == "POST":
@@ -62,14 +51,13 @@ def login_view(request):
             messages.error(request, "Invalid credentials")
     return render(request, "core/login.html")
 
-
 @login_required
 def logout_view(request):
     logout(request)
     messages.info(request, "Logged out successfully")
     return redirect("login")
 
-
+# ----------------- Dashboards -----------------
 @login_required
 def dashboard(request):
     if request.user.role != "admin":
@@ -77,56 +65,53 @@ def dashboard(request):
     projects = Project.objects.all()
     return render(request, "core/dashboard.html", {"projects": projects})
 
-
 @login_required
 def user_dashboard(request):
     projects = Project.objects.filter(users=request.user)
     return render(request, "core/user_dashboard.html", {"projects": projects})
 
-
+# ----------------- Project Management -----------------
 @login_required
 def add_project(request):
     if request.user.role != "admin":
         messages.error(request, "Only admin can create projects")
         return redirect("dashboard")
-
     if request.method == "POST":
         name = request.POST.get("project_name").strip() or f"Project {Project.objects.count() + 1}"
         if Project.objects.filter(name=name).exists():
             messages.error(request, "Project name exists")
             return redirect("dashboard")
-
         project = Project.objects.create(name=name, created_by=request.user)
         project.users.add(request.user)
-
         # Safety Plan WP
         safety_wp, _ = WorkProduct.objects.get_or_create(
             name="safety_plan", is_safety_plan=True, app_label="safety_plan"
         )
-        ProjectWorkProduct.objects.create(
+        if safety_wp:
+            ProjectWorkProduct.objects.create(
             project=project,
             workproduct=safety_wp,
             tailored_out=False,
             tailored_by=request.user
         )
-
         messages.success(request, "Project created! Tailor its WorkProducts now.")
-        return redirect("tailor_safety_plan", project_id=project.id)
-
+        return  redirect("user_dashboard")
     return render(request, "core/add_project.html")
-
 
 @login_required
 def work_products(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+
     included_pwps = ProjectWorkProduct.objects.filter(project=project, tailored_out=False)
     tailored_out_pwps = ProjectWorkProduct.objects.filter(project=project, tailored_out=True)
+
+    # For template, pass both categories + role info
     return render(request, "core/work_products.html", {
         "project": project,
         "included_workproducts": [pwp.workproduct for pwp in included_pwps],
-        "tailored_out_workproducts": [pwp.workproduct for pwp in tailored_out_pwps]
+        "tailored_out_workproducts": [pwp.workproduct for pwp in tailored_out_pwps],
+        "is_admin": request.user.role == "admin"
     })
-
 
 @login_required
 def assign_project(request):
@@ -140,24 +125,38 @@ def assign_project(request):
             messages.success(request, "Project assigned successfully")
         except Exception as e:
             messages.error(request, f"Error: {e}")
-
     return render(request, "core/assign_project.html", {
         "projects": Project.objects.all(),
         "users": User.objects.all()
     })
 
-
 def list_of_projects(request):
     projects = Project.objects.all()
     return render(request, "core/list_of_projects.html", {"projects": projects})
 
+@login_required
+def tailoring_logs(request, project_id=None):
+    """
+    Show all tailoring logs. If project_id is provided, filter by that project.
+    """
+    if request.user.role != "admin":
+        messages.error(request, "Only admin can view logs")
+        return redirect("user_dashboard")
+
+    if project_id:
+        logs = ProjectWorkProductLog.objects.filter(project_id=project_id).order_by('-tailored_at')
+        project = get_object_or_404(Project, id=project_id)
+    else:
+        logs = ProjectWorkProductLog.objects.all().order_by('-tailored_at')
+        project = None
+
+    return render(request, "core/tailoring_logs.html", {
+        "logs": logs,
+        "project": project
+    })
 
 
-# ------------------ Excel Handling ------------------
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-
-
+# ----------------- Excel Handling -----------------
 @csrf_exempt
 @require_http_methods(["POST"])
 def upload(request):
@@ -172,16 +171,13 @@ def upload(request):
         return JsonResponse({"message": "Uploaded", "filename": file.name, "sheets": xl.sheet_names})
     return JsonResponse({"error": "Invalid file format"}, status=400)
 
-
 @require_http_methods(["GET"])
 def edit(request):
     filename = request.GET.get("filename")
     sheet = request.GET.get("sheet")
     file_info = excel_data.get(filename)
-
     if not file_info or not os.path.exists(file_info["path"]):
         return JsonResponse({"error": "File not found"}, status=404)
-
     df = pd.read_excel(file_info["path"], sheet_name=sheet, dtype=str).fillna("")
     wb = load_workbook(file_info["path"], data_only=True)
     ws = wb[sheet]
@@ -209,20 +205,17 @@ def edit(request):
                         options = []
                 else:
                     options = dv.formula1.strip('"').split(",")
-
                 for cell_range in dv.sqref.ranges:
                     min_col, min_row, max_col, max_row = range_boundaries(str(cell_range))
                     for row in ws.iter_rows(min_row=min_row, max_row=max_row,
                                             min_col=min_col, max_col=max_col):
                         for cell in row:
                             dropdowns[cell.coordinate] = options
-
     return JsonResponse({
         "columns": df.columns.tolist(),
         "data": df.to_dict(orient="records"),
         "dropdowns": dropdowns
     })
-
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -232,28 +225,21 @@ def save(request):
     filename = data.get("filename")
     sheet = data.get("sheet")
     edited_data = data.get("data")
-
     if filename not in excel_data:
         return JsonResponse({"error": "File not found"}, status=404)
-
     filepath = excel_data[filename]["path"]
     df = pd.DataFrame(edited_data)
-
     wb = load_workbook(filepath)
     ws = wb[sheet]
-
     # Clear existing rows (except header)
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
         for cell in row:
             cell.value = None
-
     for r, row_data in enumerate(df.values, start=2):
         for c, value in enumerate(row_data, start=1):
             ws.cell(row=r, column=c, value=value)
-
     wb.save(filepath)
     return JsonResponse({"message": "Saved successfully"})
-
 
 @require_http_methods(["GET"])
 def download(request):
@@ -262,4 +248,4 @@ def download(request):
     if filename in excel_data:
         filepath = excel_data[filename]["path"]
         return FileResponse(open(filepath, "rb"), as_attachment=True, filename=custom_name)
-    return JsonResponse({"error": "File not found"}, status=404)  
+    return JsonResponse({"error": "File not found"}, status=404)

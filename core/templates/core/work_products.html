@@ -10,7 +10,7 @@
   {% if included_workproducts %}
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {% for wp in included_workproducts %}
-        <a href="/{{ wp.name|lower }}"
+        <a href="/{{ wp.name|lower }}/{{project.id}}/"
            class="block bg-white p-4 rounded-xl shadow hover:shadow-lg 
                   text-center font-semibold text-brand transition"
            data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:"100" }}">
@@ -20,7 +20,7 @@
     </div>
   {% else %}
     <p class="text-center text-gray-600 mt-8">
-      No tailored work products available for this project.
+      No  work products available for this project.
     </p>
   {% endif %}
 

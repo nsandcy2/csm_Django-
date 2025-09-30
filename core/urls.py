@@ -15,7 +15,8 @@ urlpatterns = [
     path("work_products/<int:project_id>/", views.work_products, name="work_products"),
     path("assign_project/", views.assign_project, name="assign_project"),
     path("list_of_projects/", views.list_of_projects, name="list_of_projects"),
-path("safety_plan/", include("safety_plan.urls")),
+    # Work product detail
+    # path("workproduct/<int:project_id>/<int:wp_id>/", views.workproduct_detail, name="workproduct_detail"),
     # Excel handling
     path("upload/", views.upload, name="upload"),
     path("edit/", views.edit, name="edit"),

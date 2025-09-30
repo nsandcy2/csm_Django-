@@ -25,12 +25,12 @@ urlpatterns = [
      path('', include("core.urls")),   # core routes
     path("crms/", include("crms.urls")), # crms routes
     path("fsrm/", include("fsrm.urls")),  # fsrm routes
-    path("safety_plan/", include("safety_plan.urls")),  # safety_plan routes
-    path("wp1/", include("wp1.urls")),  # wp1 routes
-    path("wp2/", include("wp2.urls")),  # wp2 routes
-    path("wp3/", include("wp3.urls")),  # wp3 routes
-    path("wp4/", include("wp4.urls")),  # wp4 routes
-    path("wp5/", include("wp5.urls")),  # wp5 routes
+    path("safety_plan/<int:project_id>/", include("safety_plan.urls")),  # safety_plan routes
+    path("wp1/<int:project_id>/", include("wp1.urls")),  # wp1 routes
+    path("wp2/<int:project_id>/", include("wp2.urls")),  # wp2 routes
+    path("wp3/<int:project_id>/", include("wp3.urls")),  # wp3 routes
+    path("wp4/<int:project_id>/", include("wp4.urls")),  # wp4 routes
+    path("wp5/<int:project_id>/", include("wp5.urls")),  # wp5 routes
    
 ]
 

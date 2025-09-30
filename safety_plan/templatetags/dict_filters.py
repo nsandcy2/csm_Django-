@@ -6,4 +6,4 @@ register = template.Library()
 def dictget(d, key):
     if d and key in d:
         return d.get(key)
-    return None
+    return ""
