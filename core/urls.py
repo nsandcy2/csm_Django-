@@ -1,31 +1,25 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 
 urlpatterns = [
-    path('', views.home, name="home"),   #  home route
-    # Auth
-    path("register/", views.register, name="register"),
+    path("", views.home, name="home"),
+    # Authentication paths
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
-
-    # Dashboards
+    path("register/", views.register, name="register"),
+    # Dashboard 
     path("dashboard/", views.dashboard, name="dashboard"),
     path("user_dashboard/", views.user_dashboard, name="user_dashboard"),
-
-    # Projects
-    path("list_of_projects/", views.list_of_projects, name="list_of_projects"),
-    path("list_of_wp/", views.list_of_wp, name="list_of_wp"),
+    # Project management
     path("add_project/", views.add_project, name="add_project"),
-    path("assign_project/", views.assign_project, name="assign_project"),
     path("work_products/<int:project_id>/", views.work_products, name="work_products"),
-
-
-    # File upload page
-    path("index/", views.index, name="index"),
-
+    path("assign_project/", views.assign_project, name="assign_project"),
+    path("list_of_projects/", views.list_of_projects, name="list_of_projects"),
+    # Work product detail
+    # path("workproduct/<int:project_id>/<int:wp_id>/", views.workproduct_detail, name="workproduct_detail"),
     # Excel handling
     path("upload/", views.upload, name="upload"),
     path("edit/", views.edit, name="edit"),
     path("save/", views.save, name="save"),
-    path("download/", views.download, name="download"),
+    path("download/", views.download, name="download")
 ]

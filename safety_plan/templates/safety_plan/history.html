@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}History – {{ workproduct }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow">
+  <h2 class="text-2xl font-bold text-brand mb-6">📜 History – {{ workproduct }}</h2>
+
+  <table class="min-w-full table-auto border-collapse">
+    <thead>
+      <tr class="bg-gray-100 text-left">
+        <th class="px-4 py-2">Date</th>
+        <th class="px-4 py-2">User</th>
+        <th class="px-4 py-2">Action</th>
+        <th class="px-4 py-2">Changes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+        <tr class="border-b align-top hover:bg-gray-50">
+          <td class="px-4 py-2">{{ log.history_date|date:"Y-m-d H:i" }}</td>
+          <td class="px-4 py-2">{{ log.history_user|default:"System" }}</td>
+          <td class="px-4 py-2">{{ log.history_type }}</td>
+          <td class="px-4 py-2">
+            {% if log.changes %}
+              <ul class="space-y-1">
+                {% for change in log.changes %}
+                  <li>
+                    <strong>{{ change.field }}</strong>:
+                    <span class="text-red-600 line-through">{{ change.old|default:"-" }}</span> →
+                    <span class="text-green-600">{{ change.new|default:"-" }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="text-gray-400">No field changes</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="px-4 py-2 text-center text-gray-500">No history available.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

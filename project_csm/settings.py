@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     "core",
     "crms",
     "fsrm",
-    "safe_ops"
+    "safety_plan",
+    "wp1",
+    "wp2",
+    "wp3",
+    "wp4",
+    "wp5",
 ]
 
 MIDDLEWARE = [
@@ -86,11 +91,11 @@ WSGI_APPLICATION = 'project_csm.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DB", "csm_db_3"),
-        "USER": os.getenv("MYSQL_USER", "root"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "root123"),
+        "NAME": os.getenv("MYSQL_DB", "csm_db_5"),
+        "USER": os.getenv("MYSQL_USER","root"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD","Nsandcy143@"),
         "HOST": os.getenv("MYSQL_HOST", "127.0.0.1"),
-        "PORT": os.getenv("MYSQL_PORT", "3307"),
+        "PORT": os.getenv("MYSQL_PORT", "3306"),
     }
 }
 
